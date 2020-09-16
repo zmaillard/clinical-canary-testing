@@ -1,0 +1,44 @@
+name: Terraform deploy to Azure
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: "Checkout"
+        uses: actions/checkout@master
+
+      - uses: hashicorp/setup-terraform@v1
+
+      - run: terraform init
+        env:
+          ARM_CLIENT_ID: ${{ secrets.clientId }}
+          ARM_CLIENT_SECRET: ${{ secrets.clientSecret }} 
+          ARM_SUBSCRIPTION_ID: ${{ secrets.subscription }} 
+          ARM_TENANT_ID: ${{ secrets.tenantId }}  
+
+      - name: plan
+        run: |
+          terraform plan -no-color
+        env:
+          ARM_CLIENT_ID: ${{ secrets.clientId }}
+          ARM_CLIENT_SECRET: ${{ secrets.clientSecret }} 
+          ARM_SUBSCRIPTION_ID: ${{ secrets.subscription }} 
+          ARM_TENANT_ID: ${{ secrets.tenantId }}  
+          
+      - name: apply
+        if: github.ref == 'refs/heads/master' && github.event_name == 'push'
+        run: terraform apply -auto-approve
+        env:
+          ARM_CLIENT_ID: ${{ secrets.clientId }}
+          ARM_CLIENT_SECRET: ${{ secrets.clientSecret }} 
+          ARM_SUBSCRIPTION_ID: ${{ secrets.subscription }} 
+          ARM_TENANT_ID: ${{ secrets.tenantId }}  
