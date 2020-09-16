@@ -3,7 +3,7 @@ terraform {
     resource_group_name = "RG-Terraform"
     storage_account_name = "clinterrastate"
     container_name = "tfstate"
-    key = "prod.abterraform.tfstate"
+    key = "prod.canaryterraform.tfstate"
   }
 }
 
@@ -18,25 +18,13 @@ variable "location" {
   default = "westus"
 }
 
-variable "environment" {
-  type = string
-  default = "dev"
-}
-
 resource "azurerm_resource_group" "rg" {
-    name = "RG_Clinical_AB_${var.environment}"
+    name = "RG_Clinical_Canary"
     location = var.location
 }
 
-resource "azurerm_cdn_profile" "cdn" {
-  name = "Clinical-AB-CDN-${var.environment}"
-  location = var.location
-  resource_group_name = azurerm_resource_group.rg.name
-  sku = "Standard_Microsoft"
-}
-
-resource "azurerm_storage_account" "staticwebstorage" {
-    name = "clinicalabstatic${var.environment}"
+resource "azurerm_storage_account" "staticwebstoragegreen" {
+    name = "clincanarygreen"
     resource_group_name = azurerm_resource_group.rg.name
     location = var.location
     account_tier = "Standard"
@@ -47,8 +35,19 @@ resource "azurerm_storage_account" "staticwebstorage" {
     }
 }
 
+resource "azurerm_storage_account" "staticwebstorageblue" {
+    name = "clincanaryblue"
+    resource_group_name = azurerm_resource_group.rg.name
+    location = var.location
+    account_tier = "Standard"
+    account_replication_type = "LRS"
+    account_kind = "StorageV2"
+    static_website  {
+        index_document = "index.html"
+    }
+}
 resource "azurerm_storage_account" "tablestorage" {
-    name = "clinicalabdata${var.environment}"
+    name = "clincanarydata"
     resource_group_name = azurerm_resource_group.rg.name
     location = var.location
     account_tier = "Standard"
@@ -64,18 +63,4 @@ resource "azurerm_storage_table" "feature_flag" {
 resource "azurerm_storage_table" "feedback" {
   name                 = "feedback"
   storage_account_name = azurerm_storage_account.tablestorage.name
-}
-
-
-resource "azurerm_cdn_endpoint" "staticwebendpoint" {
-    name = "clinicalabendpoint${var.environment}"
-    profile_name = azurerm_cdn_profile.cdn.name
-    location = var.location
-    resource_group_name = azurerm_resource_group.rg.name
-    origin_host_header = azurerm_storage_account.staticwebstorage.primary_web_host
-
-    origin {
-        name = "clinicalaborigin${var.environment}"
-        host_name = azurerm_storage_account.staticwebstorage.primary_web_host
-    }
 }
