@@ -119,7 +119,7 @@ resource "azurerm_frontdoor" "canary_frontdoor" {
 
   frontend_endpoint {
     name                              = "Clinical-Canary-FrontEnd"
-    host_name                         = "clin-canary-test.azurefd.net"
+    host_name                         = "canary_frontdoor.azurefd.net"
     session_affinity_enabled          = true
   }
 }
