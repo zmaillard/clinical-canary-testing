@@ -101,8 +101,8 @@ resource "azurerm_frontdoor" "canary_frontdoor" {
   backend_pool {
     name = "CanaryStorageBackend"
     backend {
-      host_header = "${var.prefix}clincanaryblue.blob.core.windows.net"
-      address     = "${var.prefix}clincanaryblue.blob.core.windows.net"
+      host_header = "${var.prefix}clincanaryblue.z22.web.core.windows.net"
+      address     = "${var.prefix}clincanaryblue.z22.web.core.windows.net"
       http_port   = 80
       https_port  = 443
       priority    = 1
@@ -110,8 +110,8 @@ resource "azurerm_frontdoor" "canary_frontdoor" {
     }
 
     backend {
-      host_header = "${var.prefix}clincanarygreen.blob.core.windows.net"
-      address     = "${var.prefix}clincanarygreen.blob.core.windows.net"
+      host_header = "${var.prefix}clincanarygreen.z22.web.blob.core.windows.net"
+      address     = "${var.prefix}clincanarygreen.z22.web.blob.core.windows.net"
       http_port   = 80
       https_port  = 443
       priority    = 1
