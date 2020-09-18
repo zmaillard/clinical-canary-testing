@@ -41,7 +41,7 @@ resource "azurerm_storage_account" "staticwebstoragegreen" {
 }
 
 resource "azurerm_storage_account" "staticwebstorageblue" {
-    name = "${prefix}clincanaryblue"
+    name = "${var.prefix}clincanaryblue"
     resource_group_name = azurerm_resource_group.rg.name
     location = var.location
     account_tier = "Standard"
@@ -52,7 +52,7 @@ resource "azurerm_storage_account" "staticwebstorageblue" {
     }
 }
 resource "azurerm_storage_account" "tablestorage" {
-    name = "${prefix}clincanarydata"
+    name = "${var.prefix}clincanarydata"
     resource_group_name = azurerm_resource_group.rg.name
     location = var.location
     account_tier = "Standard"
@@ -75,7 +75,7 @@ resource "azurerm_frontdoor_custom_https_configuration" "clinical_canary_custom_
   custom_https_provisioning_enabled = false
 }
 resource "azurerm_frontdoor" "canary_frontdoor" {
-  name                                         = "${prefix}Clinical-Canary-FrontDoor"
+  name                                         = "${var.prefix}Clinical-Canary-FrontDoor"
   resource_group_name                          = azurerm_resource_group.rg.name
   enforce_backend_pools_certificate_name_check = false
 
@@ -101,8 +101,8 @@ resource "azurerm_frontdoor" "canary_frontdoor" {
   backend_pool {
     name = "CanaryStorageBackend"
     backend {
-      host_header = "${prefix}clincanaryblue.blob.core.windows.net"
-      address     = "${prefix}clincanaryblue.blob.core.windows.net"
+      host_header = "${var.prefix}clincanaryblue.blob.core.windows.net"
+      address     = "${var.prefix}clincanaryblue.blob.core.windows.net"
       http_port   = 80
       https_port  = 443
       priority    = 1
@@ -110,8 +110,8 @@ resource "azurerm_frontdoor" "canary_frontdoor" {
     }
 
     backend {
-      host_header = "${prefix}clincanarygreen.blob.core.windows.net"
-      address     = "${prefix}clincanarygreen.blob.core.windows.net"
+      host_header = "${var.prefix}clincanarygreen.blob.core.windows.net"
+      address     = "${var.prefix}clincanarygreen.blob.core.windows.net"
       http_port   = 80
       https_port  = 443
       priority    = 1
@@ -123,8 +123,8 @@ resource "azurerm_frontdoor" "canary_frontdoor" {
   }
 
   frontend_endpoint {
-    name                              = "${prefix}Clinical-Canary-FrontEnd"
-    host_name                         = "${prefix}Clinical-Canary-FrontDoor.azurefd.net"
+    name                              = "${var.prefix}Clinical-Canary-FrontEnd"
+    host_name                         = "${var.prefix}Clinical-Canary-FrontDoor.azurefd.net"
     session_affinity_enabled          = true
   }
 }
