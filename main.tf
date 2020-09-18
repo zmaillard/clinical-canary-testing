@@ -96,7 +96,7 @@ resource "azurerm_frontdoor" "canary_frontdoor" {
 
   backend_pool_health_probe {
     name = "clin-canary-health-probe"
-    path = "/index.html"
+    path = "/health.txt"
     protocol = "Https"
   }
 
