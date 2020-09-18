@@ -101,7 +101,7 @@ resource "azurerm_frontdoor" "canary_frontdoor" {
       http_port   = 80
       https_port  = 443
       priority    = 1
-      weight      = 1000
+      weight      = 500
     }
 
     backend {
@@ -110,7 +110,7 @@ resource "azurerm_frontdoor" "canary_frontdoor" {
       http_port   = 80
       https_port  = 443
       priority    = 1
-      weight      = 1000
+      weight      = 500
     }
 
     load_balancing_name = "clin-canary-load-balancing"
